@@ -4,12 +4,11 @@ import com.quadrixsoft.interviewapplication.R
 import com.quadrixsoft.interviewapplication.repository.network.RetrofitService
 import com.quadrixsoft.interviewapplication.repository.network.WeatherApi
 import com.quadrixsoft.interviewapplication.repository.utils.PartOfTheDayCalculator
-import java.util.*
 
 object Repository {
     private val weatherApi = RetrofitService.invoke().create(WeatherApi::class.java)
 
-    suspend fun getWeatherData() = weatherApi.fetchWeatherData()
+    suspend fun getWeatherData(latitude : Double, longitude : Double) = weatherApi.fetchWeatherData(lat = latitude, lon =longitude)
 
     fun getWelcomeTextResourceId(): Int {
         return when (PartOfTheDayCalculator.calculate()) {

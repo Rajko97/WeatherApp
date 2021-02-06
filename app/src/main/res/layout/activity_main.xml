@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         tools:text="Hello World!"
         android:gravity="center"
-        style="@style/TextAppearance.MaterialComponents.Headline3"/>
+        style="@style/TextAppearance.MaterialComponents.Headline5"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerWeather24h"

@@ -2,9 +2,12 @@ package com.quadrixsoft.interviewapplication.ui.main
 
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.*
+import com.quadrixsoft.interviewapplication.R
+import com.quadrixsoft.interviewapplication.model.WelcomeTextData
 import com.quadrixsoft.interviewapplication.repository.Repository
 import com.quadrixsoft.interviewapplication.repository.network.WeatherModel
 import com.quadrixsoft.interviewapplication.repository.utils.PartOfTheDayCalculator
+import com.quadrixsoft.interviewapplication.utils.Constants
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -12,7 +15,7 @@ import kotlinx.coroutines.withContext
 class MainViewModel : ViewModel() {
     private val weather: MutableLiveData<WeatherModel> by lazy {
         MutableLiveData(WeatherModel(emptyList())).also {
-            loadWeatherData()
+            loadWeatherData("Niš")
         }
     }
 
@@ -20,19 +23,20 @@ class MainViewModel : ViewModel() {
         return weather
     }
 
-    private val welcomeTextResourceId: MutableLiveData<Int> by lazy {
-        MutableLiveData(Repository.getWelcomeTextResourceId())
+    val welcomeTextData : MutableLiveData<WelcomeTextData> by lazy {
+        MutableLiveData(WelcomeTextData(Repository.getWelcomeTextResourceId(), "Niš"))
     }
 
-    fun getWelcomeTextResourceId() : LiveData<Int> {
-        return welcomeTextResourceId
+    fun onError(query: String) {
+        welcomeTextData.postValue(WelcomeTextData(Repository.getWelcomeTextResourceId(), query, R.string.welcome_header_not_found))
     }
 
-    private fun loadWeatherData() {
+    fun loadWeatherData(selectedCityName : String, latitude : Double = Constants.LATITUDE, longitude : Double = Constants.LONGITUDE) {
         viewModelScope.launch {
-            val data = Repository.getWeatherData()
+            val data = Repository.getWeatherData(latitude, longitude)
             withContext(Dispatchers.Main) {
                 weather.value = data
+                welcomeTextData.value = WelcomeTextData(Repository.getWelcomeTextResourceId(), selectedCityName)
             }
         }
     }
