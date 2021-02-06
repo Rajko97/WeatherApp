@@ -9,14 +9,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.quadrixsoft.interviewapplication.R
-import com.quadrixsoft.interviewapplication.repository.network.WeatherModel
+import com.quadrixsoft.interviewapplication.model.Weather24HData
 import com.quadrixsoft.interviewapplication.utils.Constants
-import java.text.SimpleDateFormat
 
 class MainRecyclerAdapter : RecyclerView.Adapter<MainRecyclerAdapter.WeatherViewHolder>() {
-    private val weatherFor24hList : ArrayList<WeatherModel.HourlyModel> = ArrayList(emptyList())
+    private val weatherFor24hList : ArrayList<Weather24HData> = ArrayList(emptyList())
 
-    fun submitData(newWeatherData: List<WeatherModel.HourlyModel>) {
+    fun submitData(newWeatherData: List<Weather24HData>) {
         weatherFor24hList.clear()
         weatherFor24hList.addAll(newWeatherData)
         notifyDataSetChanged()
@@ -26,23 +25,20 @@ class MainRecyclerAdapter : RecyclerView.Adapter<MainRecyclerAdapter.WeatherView
         return WeatherViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.recycler_main_item, parent, false))
     }
 
-    inner class WeatherViewHolder(private val itemView: View): RecyclerView.ViewHolder(itemView) {
+    inner class WeatherViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
         private val tvAverageTemperature: TextView = itemView.findViewById(R.id.tvAvgTemperature)
         private val tvTime: TextView = itemView.findViewById(R.id.tvTime)
         private val tvDescription: TextView = itemView.findViewById(R.id.tvDesc)
         private val imageView: ImageView = itemView.findViewById(R.id.ivIcon)
 
-        fun bind(data: WeatherModel.HourlyModel) {
-            val temperature = String.format("%.1f°C", data.temp)
-            val time = SimpleDateFormat("HH:mm").format(data.time*1000)
-
-            tvAverageTemperature.text = temperature
-            tvTime.text = time
-            tvDescription.text = data.weather[0].description
+        fun bind(data: Weather24HData) {
+            tvAverageTemperature.text = data.temperature
+            tvTime.text = data.time
+            tvDescription.text = data.description
 
             Glide
                 .with(itemView.context)
-                .load(Constants.IMAGE_API+data.weather[0].icon+".png")
+                .load(Constants.IMAGE_API+data.iconPath+".png")
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .centerCrop()
                 .into(imageView)

@@ -5,6 +5,7 @@
 
     <string name="welcome_header">%1$s,\n%2$s u narednih 24h</string>
     <string name="welcome_header_not_found">%1$s,\nNismo pronašli rezultate za %2$s</string>
+    <string name="welcome_header_network_error">%1$s, \nNismo uspeli da kontaktiramo server.\nProverite konekciju i pokušajte opet.%2$s</string>
 
     <string name="message_good_morning">Dobro jutro</string>
     <string name="message_good_afternoon">Dobar dan</string>

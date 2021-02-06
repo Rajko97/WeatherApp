@@ -3,9 +3,11 @@ package com.quadrixsoft.interviewapplication.ui.main
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.*
 import com.quadrixsoft.interviewapplication.R
+import com.quadrixsoft.interviewapplication.model.Weather24HData
 import com.quadrixsoft.interviewapplication.model.WelcomeTextData
+import com.quadrixsoft.interviewapplication.repository.Mapper.Companion.convertToDomainObject
 import com.quadrixsoft.interviewapplication.repository.Repository
-import com.quadrixsoft.interviewapplication.repository.network.WeatherModel
+import com.quadrixsoft.interviewapplication.repository.network.ResultWrapper
 import com.quadrixsoft.interviewapplication.repository.utils.PartOfTheDayCalculator
 import com.quadrixsoft.interviewapplication.utils.Constants
 import kotlinx.coroutines.Dispatchers
@@ -13,13 +15,15 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class MainViewModel : ViewModel() {
-    private val weather: MutableLiveData<WeatherModel> by lazy {
-        MutableLiveData(WeatherModel(emptyList())).also {
+    private val weather: MutableLiveData<List<Weather24HData>> by lazy {
+        MutableLiveData<List<Weather24HData>>().apply {
+            value = emptyList()
+        }.also {
             loadWeatherData("Niš")
         }
     }
 
-    fun getWeatherData(): LiveData<WeatherModel> {
+    fun getWeatherData(): LiveData<List<Weather24HData>> {
         return weather
     }
 
@@ -35,8 +39,13 @@ class MainViewModel : ViewModel() {
         viewModelScope.launch {
             val data = Repository.getWeatherData(latitude, longitude)
             withContext(Dispatchers.Main) {
-                weather.value = data
-                welcomeTextData.value = WelcomeTextData(Repository.getWelcomeTextResourceId(), selectedCityName)
+                if(data is ResultWrapper.Success) {
+                    weather.value = data.value.convertToDomainObject()
+                    welcomeTextData.value = WelcomeTextData(Repository.getWelcomeTextResourceId(), selectedCityName)
+                } else {
+                    weather.value = emptyList()
+                    welcomeTextData.value = WelcomeTextData(Repository.getWelcomeTextResourceId(), "", R.string.welcome_header_network_error)
+                }
             }
         }
     }

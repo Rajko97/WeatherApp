@@ -10,6 +10,7 @@ import androidx.appcompat.widget.SearchView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.quadrixsoft.interviewapplication.R
+import com.quadrixsoft.interviewapplication.utils.LanguageConverter.Companion.convertCyrillicToLatin
 
 class MainActivity : AppCompatActivity() {
     private val viewModel: MainViewModel by viewModels()
@@ -38,12 +39,20 @@ class MainActivity : AppCompatActivity() {
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 if(query != null) {
-                    val address = geocoder.getFromLocationName(query, 1)
-                    if(address.size > 0) {
-                        recyclerView.scrollToPosition(0)
-                        viewModel.loadWeatherData(query, address[0].latitude, address[0].longitude)
-                        searchView.clearFocus()
-                    } else {
+                    try {
+                        val address = geocoder.getFromLocationName(query, 1)
+                        if (address.size > 0) {
+                            recyclerView.scrollToPosition(0)
+                            viewModel.loadWeatherData(
+                                address[0].locality.convertCyrillicToLatin(),
+                                address[0].latitude,
+                                address[0].longitude
+                            )
+                            searchView.clearFocus()
+                        } else {
+                            throw Exception()
+                        }
+                    } catch (exception: Exception) {
                         adapter.submitData(emptyList())
                         viewModel.onError(query)
                     }
@@ -64,7 +73,7 @@ class MainActivity : AppCompatActivity() {
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(this)
         viewModel.getWeatherData().observe(this, { weatherData ->
-            adapter.submitData(weatherData.hourly)
+            adapter.submitData(weatherData)
         })
     }
 
