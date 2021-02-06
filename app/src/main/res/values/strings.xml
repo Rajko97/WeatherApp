@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">Weather</string>
+
+    <string name="main_activity_title">Vremenska prognoza za Niš</string>
+
+    <string name="message_good_morning">Dobro jutro</string>
+    <string name="message_good_afternoon">Dobar dan</string>
+    <string name="message_good_evening">Dobro veče</string>
+    <string name="message_good_night">Laku noć</string>
 </resources>

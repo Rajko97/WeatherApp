@@ -7,8 +7,10 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.quadrixsoft.interviewapplication.R
 import com.quadrixsoft.interviewapplication.repository.network.WeatherModel
+import com.quadrixsoft.interviewapplication.utils.Constants
 import java.text.SimpleDateFormat
 
 class MainRecyclerAdapter : RecyclerView.Adapter<MainRecyclerAdapter.WeatherViewHolder>() {
@@ -40,7 +42,8 @@ class MainRecyclerAdapter : RecyclerView.Adapter<MainRecyclerAdapter.WeatherView
 
             Glide
                 .with(itemView.context)
-                .load("http://openweathermap.org/img/w/"+data.weather[0].icon+".png")
+                .load(Constants.IMAGE_API+data.weather[0].icon+".png")
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .centerCrop()
                 .into(imageView)
         }

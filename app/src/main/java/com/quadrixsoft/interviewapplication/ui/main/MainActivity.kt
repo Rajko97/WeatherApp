@@ -33,13 +33,12 @@ class MainActivity : AppCompatActivity() {
 
     private fun initWelcomeText() {
         val tvHelloWorld = findViewById <TextView>(R.id.tvHelloWorld)
-        tvHelloWorld.text = "Dobro veče"
+        viewModel.getWelcomeTextResourceId().observe(this, {
+            tvHelloWorld.text = getString(it)
+        })
     }
 
     private fun initBackground() {
-        if(false)
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-        else
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        viewModel.setDefaultNightMode()
     }
 }
